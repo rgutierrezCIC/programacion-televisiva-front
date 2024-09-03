@@ -5,14 +5,15 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
+      <h1 class="green">Programación Televisiva</h1>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <router-link to="/">Inicio</router-link>
+        <router-link to="/programtypes">Tipos de programa</router-link>
+        <router-link to="/programs">Programas</router-link>
+        <router-link to="/about">Acerca de</router-link>
       </nav>
     </div>
   </header>
@@ -24,6 +25,10 @@ import HelloWorld from './components/HelloWorld.vue'
 header {
   line-height: 1.5;
   max-height: 100vh;
+}
+
+h1 {
+  text-align: center;
 }
 
 .logo {

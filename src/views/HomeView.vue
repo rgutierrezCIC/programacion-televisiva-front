@@ -4,7 +4,8 @@
     <nav>
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <router-link to="/programs">Programas</router-link> <!-- Nuevo enlace -->
+      <router-link to="/programtypes">Tipos de programa</router-link>
+      <router-link to="/programs">Programas</router-link>
     </nav>
   </div>
 </template>

@@ -18,17 +18,26 @@ import HelloWorld from './components/HelloWorld.vue'
     </div>
   </header>
 
-  <RouterView />
+  <div class="content">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
 header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 1000;
   line-height: 1.5;
-  max-height: 100vh;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
+  margin: 0;
 }
 
 .logo {
@@ -40,7 +49,7 @@ nav {
   width: 100%;
   font-size: 12px;
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -61,10 +70,15 @@ nav a:first-of-type {
   border: 0;
 }
 
+.content {
+  margin-top: 5rem; /* Ajusta según la altura del header */
+  padding-left: 1rem;
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
-    place-items: center;
+    align-items: center;
     padding-right: calc(var(--section-gap) / 2);
   }
 
@@ -74,7 +88,7 @@ nav a:first-of-type {
 
   header .wrapper {
     display: flex;
-    place-items: flex-start;
+    align-items: flex-start;
     flex-wrap: wrap;
   }
 
@@ -82,9 +96,13 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
-    margin-top: 1rem;
+    margin-top: 0;
+  }
+
+  .content {
+    margin-top: 6rem; /* Ajusta según la altura del header */
+    padding-left: 2rem;
   }
 }
 </style>

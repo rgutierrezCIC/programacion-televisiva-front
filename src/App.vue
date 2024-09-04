@@ -4,19 +4,18 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
     <div class="wrapper">
       <h1 class="green">Programación Televisiva</h1>
       <nav>
-        <router-link to="/">Inicio</router-link>
-        <router-link to="/programtypes">Tipos de programa</router-link>
-        <router-link to="/programs">Programas</router-link>
-        <router-link to="/about">Acerca de</router-link>
+        <router-link to="/" class="nav-link">Inicio</router-link>
+        <router-link to="/programtypes" class="nav-link">Tipos de programa</router-link>
+        <router-link to="/programs" class="nav-link">Programas</router-link>
+        <router-link to="/about" class="nav-link">Acerca de</router-link>
       </nav>
     </div>
-  </header>
+  
 
   <div class="content">
     <RouterView />
@@ -24,7 +23,7 @@ import HelloWorld from './components/HelloWorld.vue'
 </template>
 
 <style scoped>
-header {
+/* header {
   position: fixed;
   top: 0;
   width: 100%;
@@ -33,7 +32,7 @@ header {
   line-height: 1.5;
   padding: 1rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+} */
 
 h1 {
   text-align: center;
@@ -52,11 +51,11 @@ nav {
   margin-top: 1rem;
 }
 
-nav a.router-link-exact-active {
+.router-link-active {
   color: var(--color-text);
 }
 
-nav a.router-link-exact-active:hover {
+.router-link-active:hover {
   background-color: transparent;
 }
 
@@ -75,18 +74,18 @@ nav a:first-of-type {
   padding-left: 1rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 2024px) {
   header {
     display: flex;
     align-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    /* padding-right: calc(var(--section-gap) / 2); */
   }
 
-  .logo {
+  /* .logo {
     margin: 0 2rem 0 0;
-  }
+  } */
 
-  header .wrapper {
+  .wrapper {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;

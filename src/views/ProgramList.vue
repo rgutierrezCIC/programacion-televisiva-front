@@ -19,7 +19,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)" :class="{ selected: programa.id === selectedPrograma?.id }">
+        <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)"
+          :class="{ selected: programa.id === selectedPrograma?.id }">
           <td>{{ programa.nombre }}</td>
           <td>{{ programa.descripcion }}</td>
           <td>{{ programa.clasificacion }}</td>
@@ -31,13 +32,8 @@
       </tbody>
     </table>
 
-    <ProgramDetails
-      v-if="showNewForm || showDetails"
-      :programa="editablePrograma"
-      :isEditMode="showDetails"
-      @save="handleSave"
-      @cancel="handleCancel"
-    />
+    <ProgramDetails v-if="showNewForm || showDetails" :programa="editablePrograma" :isEditMode="showDetails"
+      @save="handleSave" @cancel="handleCancel" />
 
     <div v-if="showModal" class="modal">
       <div class="modal-content">
@@ -181,7 +177,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   padding: 8px;
 }
@@ -208,15 +205,18 @@ button {
 }
 
 button.create-button {
-  background-color: #28a745; /* Verde */
+  background-color: #28a745;
+  /* Verde */
 }
 
 button.edit-button {
-  background-color: #007bff; /* Azul */
+  background-color: #007bff;
+  /* Azul */
 }
 
 button.delete-button {
-  background-color: #dc3545; /* Rojo */
+  background-color: #dc3545;
+  /* Rojo */
 }
 
 button:disabled {

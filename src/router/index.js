@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProgramList from '../views/ProgramList.vue' // Importa el nuevo componente
-import ProgramTypeList from '../views/ProgramTypeList.vue'
+import ProgramTypeView from '../views/ProgramTypeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +24,7 @@ const router = createRouter({
     {
       path: '/programtypes',
       name: 'programtypes',
-      component: ProgramTypeList
+      component: ProgramTypeView
     }
   ]
 })

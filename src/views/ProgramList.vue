@@ -1,7 +1,11 @@
 <template>
   <div class="program-list">
     <h1>Lista de Programas</h1>
-    <button @click="createNewPrograma">Crear Nuevo Programa</button>
+    <div class="actions">
+      <button class="create-button" @click="createNewPrograma">Crear Nuevo Programa</button>
+      <button class="edit-button" @click="editPrograma" :disabled="!selectedPrograma">Editar</button>
+      <button class="delete-button" @click="showDeleteModal" :disabled="!selectedPrograma">Eliminar</button>
+    </div>
     <table>
       <thead>
         <tr>
@@ -11,6 +15,7 @@
           <th>Canal</th>
           <th>Fecha Inicio</th>
           <th>Fecha Fin</th>
+          <th>Tipo de Programa</th>
         </tr>
       </thead>
       <tbody>
@@ -21,14 +26,10 @@
           <td>{{ programa.canal }}</td>
           <td>{{ formatDate(programa.fechaIni) }}</td>
           <td>{{ formatDate(programa.fechaFin) }}</td>
+          <td>{{ programa.tipoPrograma?.nombre }}</td>
         </tr>
       </tbody>
     </table>
-
-    <div class="actions">
-      <button @click="editPrograma" :disabled="!selectedPrograma">Editar</button>
-      <button @click="confirmDelete" :disabled="!selectedPrograma">Eliminar</button>
-    </div>
 
     <ProgramDetails
       v-if="showNewForm || showDetails"
@@ -71,7 +72,6 @@ export default {
     async fetchProgramas() {
       try {
         const response = await axios.get('/api/programas')
-        // Asegúrate de que response.data es un array
         if (Array.isArray(response.data)) {
           this.programas = response.data
         } else {
@@ -103,7 +103,7 @@ export default {
         semanal: false,
         favorito: false,
         dias: [],
-        tipoPrograma: null // Asegúrate de que el tipoPrograma está inicializado
+        tipoPrograma: null
       }
       this.showNewForm = true
       this.showDetails = false
@@ -114,6 +114,9 @@ export default {
         this.showNewForm = false
         this.editablePrograma = { ...this.selectedPrograma }
       }
+    },
+    showDeleteModal() {
+      this.showModal = true
     },
     async confirmDelete() {
       if (!this.selectedPrograma) return
@@ -132,6 +135,7 @@ export default {
     async handleSave(programa) {
       try {
         if (this.showDetails) {
+          // Actualizar el programa existente
           const response = await axios.put('/api/programas', programa)
           const updatedPrograma = response.data
           const index = this.programas.findIndex(p => p.id === updatedPrograma.id)
@@ -140,12 +144,17 @@ export default {
           }
           this.selectedPrograma = updatedPrograma
         } else if (this.showNewForm) {
+          // Crear un nuevo programa
           const response = await axios.post('/api/programas', programa)
           const newPrograma = response.data
           this.programas.push(newPrograma)
         }
+
         this.showDetails = false
         this.showNewForm = false
+
+        // Recargar la lista de programas
+        this.fetchProgramas()
       } catch (error) {
         console.error('Error al guardar el programa:', error)
       }
@@ -187,16 +196,27 @@ tr.selected {
 }
 
 .actions {
-  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 button {
-  margin-top: 1rem;
+  margin-right: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #ff4d4d;
   color: white;
   border: none;
   cursor: pointer;
+}
+
+button.create-button {
+  background-color: #28a745; /* Verde */
+}
+
+button.edit-button {
+  background-color: #007bff; /* Azul */
+}
+
+button.delete-button {
+  background-color: #dc3545; /* Rojo */
 }
 
 button:disabled {

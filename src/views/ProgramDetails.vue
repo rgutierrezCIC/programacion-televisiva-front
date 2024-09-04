@@ -46,8 +46,8 @@
       </select>
     </label>
     <div class="details-buttons">
-      <button @click="saveChanges">{{ isEditMode ? 'Guardar Cambios' : 'Crear Programa' }}</button>
-      <button @click="cancelEdit">Cancelar</button>
+      <button class="save-button" @click="saveChanges">{{ isEditMode ? 'Guardar Cambios' : 'Crear Programa' }}</button>
+      <button class="cancel-button" @click="cancelEdit">Cancelar</button>
     </div>
   </div>
 </template>
@@ -95,18 +95,24 @@ export default {
     async saveChanges() {
       try {
         if (this.isEditMode) {
-          // Emitir evento para guardar cambios en modo edición
-          this.$emit('save', this.programa)
+          // Llamar al endpoint PUT para actualizar el programa existente
+          const response = await axios.put('/api/programas', this.programa)
+          const updatedPrograma = response.data
+          this.$emit('save', updatedPrograma)
         } else {
-          // Crear nuevo programa
+          // Crear un nuevo programa
           const response = await axios.post('/api/programas', this.programa)
           const newPrograma = response.data
           this.$emit('save', newPrograma)
         }
+
+        // Recargar la página después de guardar los cambios
+        window.location.reload()
       } catch (error) {
         console.error('Error al guardar el programa:', error)
       }
     },
+
     cancelEdit() {
       this.$emit('cancel')
     }
@@ -145,16 +151,19 @@ export default {
   margin-top: 1rem;
 }
 
-.details-buttons button {
+.details-buttons .save-button {
   padding: 0.5rem 1rem;
-  background-color: #ff4d4d;
+  background-color: #28a745; /* Verde */
   color: white;
   border: none;
   cursor: pointer;
 }
 
-.details-buttons button:last-child {
-  background-color: #ccc;
-  color: black;
+.details-buttons .cancel-button {
+  padding: 0.5rem 1rem;
+  background-color: #dc3545; /* Rojo */
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 </style>

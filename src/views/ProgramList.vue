@@ -11,24 +11,24 @@
           <th>Canal</th>
           <th>Fecha Inicio</th>
           <th>Fecha Fin</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)">
+        <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)" :class="{ selected: programa.id === selectedPrograma?.id }">
           <td>{{ programa.nombre }}</td>
           <td>{{ programa.descripcion }}</td>
           <td>{{ programa.clasificacion }}</td>
           <td>{{ programa.canal }}</td>
           <td>{{ formatDate(programa.fechaIni) }}</td>
           <td>{{ formatDate(programa.fechaFin) }}</td>
-          <td>
-            <button @click.stop="editPrograma(programa)">Editar</button>
-            <button @click.stop="confirmDelete(programa)">Eliminar</button>
-          </td>
         </tr>
       </tbody>
     </table>
+
+    <div class="actions">
+      <button @click="editPrograma" :disabled="!selectedPrograma">Editar</button>
+      <button @click="confirmDelete" :disabled="!selectedPrograma">Eliminar</button>
+    </div>
 
     <ProgramDetails
       v-if="showNewForm || showDetails"
@@ -88,7 +88,7 @@ export default {
     },
     selectPrograma(programa) {
       this.selectedPrograma = programa
-      this.showDetails = true
+      this.showDetails = false
       this.showNewForm = false
       this.editablePrograma = { ...programa }
     },
@@ -107,6 +107,13 @@ export default {
       }
       this.showNewForm = true
       this.showDetails = false
+    },
+    editPrograma() {
+      if (this.selectedPrograma) {
+        this.showDetails = true
+        this.showNewForm = false
+        this.editablePrograma = { ...this.selectedPrograma }
+      }
     },
     async confirmDelete() {
       if (!this.selectedPrograma) return
@@ -177,6 +184,10 @@ th {
 
 tr.selected {
   background-color: #d3d3d3;
+}
+
+.actions {
+  margin-top: 1rem;
 }
 
 button {

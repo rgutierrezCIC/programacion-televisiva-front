@@ -2,9 +2,6 @@
   <div class="about">
     <div class="about-content">
       <h1>Aplicación desarrollada por el Grupo 1</h1>
-      <p class="team-info">
-        Compuesto por:
-      </p>
       <ul class="team-list">
         <li>Pablo Sáinz</li>
         <li>Ramiro Gutiérrez</li>

@@ -117,19 +117,23 @@ export default {
       this.showModal = true
     },
     async confirmDelete() {
-      if (!this.selectedPrograma) return
+  if (!this.selectedPrograma) return
 
-      try {
-        await axios.delete(`/api/programas/${this.selectedPrograma.id}`)
-        this.programas = this.programas.filter(p => p.id !== this.selectedPrograma.id)
-        this.selectedPrograma = null
-        this.showModal = false
-        this.showDetails = false
-        this.showNewForm = false
-      } catch (error) {
-        console.error('Error al eliminar el programa:', error)
-      }
-    },
+  try {
+    await axios.delete(`/api/programas/${this.selectedPrograma.id}`)
+    this.selectedPrograma = null
+    this.showModal = false
+    this.showDetails = false
+    this.showNewForm = false
+
+    // Recargar completamente la página (como si presionara F5)
+    window.location.reload()
+  } catch (error) {
+    console.error('Error al eliminar el programa:', error)
+  }
+}
+
+,
     async handleSave(programa) {
       try {
         if (this.showDetails) {

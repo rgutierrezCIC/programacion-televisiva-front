@@ -31,7 +31,7 @@
 h1 {
   margin-bottom: 1rem;
   font-size: 2rem;
-  color: #007bff;
+  color: hsla(160, 100%, 37%, 1);
 }
 
 .team-info, .bootcamp-info {

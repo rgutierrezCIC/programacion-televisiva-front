@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="home">
+    <img src="@/assets/LogoTP.jpg" alt="Imagen de inicio" class="home-image" />
     <p class="welcome-message">
       ¡Bienvenido a nuestra página de programación televisiva! Aquí encontrarás todos los programas que te gustan, organizados de manera sencilla y fácil de navegar.
     </p>
@@ -16,6 +17,18 @@ export default {
 </script>
 
 <style scoped>
+.home {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.home-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  opacity: 0.8; /* Hacer la imagen un poco transparente */
+}
+
 .welcome-message, .fun-facts {
   margin: 2rem;
   padding: 1rem;
@@ -37,19 +50,4 @@ export default {
   background-color: #f9f9f9;
   /* Fondo más claro */
 }
-
-nav {
-  margin-top: 2rem;
-}
-
-router-link {
-  margin-right: 1rem;
-  font-weight: bold;
-  color: #007bff;
-}
-
-router-link:hover {
-  text-decoration: underline;
-}
-
 </style>

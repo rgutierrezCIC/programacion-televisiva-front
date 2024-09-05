@@ -23,15 +23,13 @@ describe('Program List', () => {
 
     // Completa el formulario
     cy.get('input[type="text"]').eq(0).type('Nuevo Programa')
-    cy.get('input[type="text"][placeholder="Descripción"]').type('Descripción del nuevo programa')
-    cy.get('input[type="text"][placeholder="Clasificación"]').type('Clasificación A')
-    cy.get('input[type="text"][placeholder="Canal"]').type('Canal XYZ')
-    cy.get('input[type="datetime-local"][placeholder="Fecha Inicio"]').type('2024-01-01T00:00')
-    cy.get('input[type="datetime-local"][placeholder="Fecha Fin"]').type('2024-12-31T23:59')
+    cy.get('input[type="text"]').eq(1).type('Descripción del nuevo programa')
+    cy.get('input[type="text"]').eq(2).type('Clasificación A')
+    cy.get('input[type="text"]').eq(3).type('Canal XYZ')
 
     // Simula la selección de días y tipo de programa
     cy.get('input[type="checkbox"]').check(['Lunes', 'Martes'])
-    cy.get('select').select('Tipo1') // Cambia 'Tipo1' por un valor válido
+    cy.get('select').select('Documental') 
 
     // Guarda el nuevo programa
     cy.get('.save-button').click()
@@ -44,21 +42,46 @@ describe('Program List', () => {
   it('Debería poder editar un programa existente', () => {
     // Selecciona el primer programa de la lista
     cy.get('table tbody tr').first().click()
-
+  
     // Abre el formulario de edición
     cy.get('.edit-button').click()
-
+  
     // Cambia el nombre del programa
-    cy.get('input[type="text"][placeholder="Nombre"]').clear().type('Programa Editado')
-
+    cy.get('input[type="text"]').first().clear().type('Programa Editado') // Usamos .first() para obtener el primer input de tipo text
+  
     // Guarda los cambios
     cy.get('.save-button').click()
-
+  
     // Verifica que el programa modificado aparece en la tabla con los cambios
     cy.get('table tbody').should('contain', 'Programa Editado')
   })
-
-  // Puedes agregar más pruebas para casos adicionales, como cancelación o eliminación
+  it('Debería poder eliminar un programa existente', () => {
+    // Almacena la cantidad inicial de programas en la tabla
+    cy.get('table tbody tr').then(($rows) => {
+      const initialRowCount = $rows.length
+  
+      // Selecciona el primer programa de la lista
+      cy.get('table tbody tr').first().click()
+  
+      // Abre el modal de confirmación de eliminación
+      cy.get('.delete-button').click()
+  
+      // Verifica que se muestra el modal de confirmación
+      cy.get('.modal-content').should('be.visible')
+  
+      // Confirma la eliminación
+      cy.get('.modal-content button').contains('Sí').click()
+  
+      // Espera a que la tabla se actualice
+      cy.wait(2000)
+  
+      // Verifica que el número de filas se ha reducido en 1
+      cy.get('table tbody tr').should('have.length', initialRowCount - 1)
+    })
+  })
+  
+  
+  
 })
   
 }) })

@@ -41,8 +41,14 @@ export default {
         cancelForm() {
             this.$emit('cancel');
         }
+    },
+    mounted() {
+
+        this.$nextTick(() => {
+            this.$el.scrollIntoView({ behavior: 'smooth' });
+        });
     }
-}
+};
 </script>
 
 <style scoped>

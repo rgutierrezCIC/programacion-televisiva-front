@@ -124,6 +124,13 @@ export default {
       }
       this.showNewForm = true
       this.showDetails = false
+
+      this.$nextTick(() => {
+        const editForm = this.$refs.editForm
+        if (editForm) {
+          editForm.$el.scrollIntoView({ behavior: 'smooth' })
+        }
+      })
     },
     editPrograma() {
       if (this.selectedPrograma) {
@@ -131,7 +138,6 @@ export default {
         this.showNewForm = false
         this.editablePrograma = { ...this.selectedPrograma }
 
-        // Hacer scroll suave hasta el componente de edición
         this.$nextTick(() => {
           const editForm = this.$refs.editForm
           if (editForm) {
@@ -289,6 +295,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Tipos de Programa</h1>
     <table>
       <thead>
         <tr>

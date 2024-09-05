@@ -1,21 +1,31 @@
 <template>
-    <div class="container">
+    <div class="program-list">
+        <h1>Tipos de Programas</h1>
+        <div class="actions">
+            <button class="create-button" @click="addProgramType">Crear nuevo Tipo Programa</button>
+            <button class="edit-button" @click="editProgramType" :disabled="!selectedProgramType">Editar</button>
+            <button class="delete-button" @click.stop="showDeleteModal"
+                :disabled="!selectedProgramType">Eliminar</button>
+        </div>
         <div class="left-panel">
-            <ProgramTypeTable :programTypes="programTypes" @programType-selected="handleProgramTypeSelected"
-                @programType-deleted="handleProgramTypeDeleted" />
-            <div class="buttons">
-                <button class="addbutton" @click="addProgramType">Añadir</button>
-                <button class="editbutton" @click="editProgramType">Editar</button>
-                <button @click.stop="handleProgramTypeDeleted(selectedProgramType)">Borrar</button>
-            </div>
+            <ProgramTypeTable :programTypes="programTypes" @programType-selected="handleProgramTypeSelected" />
         </div>
         <div class="right-panel" v-if="isEditing || isAdding">
             <ProgramTypeForm :programType="selectedProgramType" :mode="isEditing ? 'edit' : 'add'" />
-            <div class="buttons">
-                <button class="savebutton" @click="handleProgramTypeSaved">Guardar</button>
-                <button @click.stop="cancelEdit">Cancelar</button>
+            <div class="details-buttons">
+                <button class="save-button" @click="handleProgramTypeSaved">Guardar</button>
+                <button class="cancel-button" @click.stop="cancelEdit">Cancelar</button>
             </div>
         </div>
+
+        <div v-if="showModal" class="modal">
+            <div class="modal-content">
+                <p>¿Estás seguro de que deseas eliminar este tipo de programa?</p>
+                <button @click="confirmDelete">Sí</button>
+                <button @click="showModal = false">No</button>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -35,7 +45,9 @@ export default {
             programTypes: [],
             selectedProgramType: null,
             isEditing: false,
-            isAdding: false
+            isAdding: false,
+            selectedPrograma: null,
+            showModal: false
         };
     },
     async created() {
@@ -95,20 +107,37 @@ export default {
             this.isEditing = false;
             this.isAdding = false;
         },
-        async handleProgramTypeDeleted(programType) {
+        async confirmDelete() {
+            if (!this.selectedProgramType) return
+
             this.isEditing = false;
             const toast = useToast();
             try {
-                await axios.delete(`/api/tipoprogramas/${programType.id}`);
-                this.programTypes = this.programTypes.filter(u => u.id !== programType.id);
-                if (this.selectedProgramType && this.selectedProgramType.id === programType.id) {
-                    this.selectedProgramType = null;
-                    // this.$router.push('/');
-                }
-                toast.success(`El tipo de programa ${programType.nombre} se ha borrado.`);
+                await axios.delete(`/api/tipoprogramas/${this.selectedProgramType.id}`);
+                this.programTypes = this.programTypes.filter(u => u.id !== this.selectedProgramType.id);
+                toast.success(`El tipo de programa ${this.selectedProgramType.nombre} se ha borrado.`);
+                this.selectedProgramType = null;
+                this.showModal = false;
             } catch (error) {
                 console.error('Error al borrar el tipo de programa:', error);
-                toast.error(`Error al borrar el tipo de programa ${programType.nombre}.`);
+                toast.error(`Error al borrar el tipo de programa ${this.selectedProgramType.nombre}.`);
+            }
+        },
+        showDeleteModal() {
+            this.showModal = true
+        },
+        async confirmDelete2() {
+            if (!this.selectedPrograma) return
+
+            try {
+                await axios.delete(`/api/programas/${this.selectedPrograma.id}`)
+                this.programas = this.programas.filter(p => p.id !== this.selectedPrograma.id)
+                this.selectedPrograma = null
+                this.showModal = false
+                this.showDetails = false
+                this.showNewForm = false
+            } catch (error) {
+                console.error('Error al eliminar el programa:', error)
             }
         },
         async handleProgramTypeSaved(updatedProgramType) {
@@ -146,42 +175,110 @@ export default {
 </script>
 
 <style scoped>
-.container {
-    display: flex;
+.program-list {
+    margin: 2rem;
 }
 
-.left-panel {
-    flex: 1;
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.right-panel {
-    flex: 1;
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
-.buttons {
-    margin-top: 10px;
+th {
+    background-color: #f2f2f2;
+    text-align: left;
 }
-</style>
 
+tr.selected {
+    background-color: #d3d3d3;
+}
 
-<!-- <style scoped>
-.container {
+.actions {
+    margin-bottom: 1rem;
+}
+
+button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button.create-button {
+    background-color: #28a745;
+    /* Verde */
+}
+
+button.edit-button {
+    background-color: #007bff;
+    /* Azul */
+}
+
+button.delete-button {
+    background-color: #dc3545;
+    /* Rojo */
+}
+
+.details-buttons .save-button {
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    /* Verde */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.details-buttons .cancel-button {
+    padding: 0.5rem 1rem;
+    background-color: #dc3545;
+    /* Rojo */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
-    gap: 30px;
-    padding: 20px;
-    box-sizing: border-box;
-    /* min-width: 900px; */
+    align-items: center;
 }
 
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        height: auto;
-    }
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    text-align: center;
 }
-</style> -->
+
+.modal-content button {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-content button:last-child {
+    background-color: #ccc;
+    color: black;
+}
+</style>

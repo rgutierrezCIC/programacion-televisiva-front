@@ -22,7 +22,7 @@ describe('Program List', () => {
     cy.get('.create-button').click()
 
     // Completa el formulario
-    cy.get('input[type="text"][placeholder="Nombre"]').type('Nuevo Programa')
+    cy.get('input[type="text"]').eq(0).type('Nuevo Programa')
     cy.get('input[type="text"][placeholder="Descripción"]').type('Descripción del nuevo programa')
     cy.get('input[type="text"][placeholder="Clasificación"]').type('Clasificación A')
     cy.get('input[type="text"][placeholder="Canal"]').type('Canal XYZ')

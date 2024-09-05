@@ -50,7 +50,6 @@ export default {
         await this.fetchProgramTypes();
         const programTypeId = this.$route.params.id;
         if (programTypeId) {
-            console.log('Selected ProgramType:', programTypeId);
             this.selectProgramTypeById(programTypeId);
         }
     },
@@ -84,21 +83,17 @@ export default {
             } catch (error) {
                 const toast = useToast();
                 toast.error(`Error cargando tipos de programa.`);
-                console.error('Error cargando tipos de programa:', error);
             }
         },
         selectProgramTypeById(id) {
             const programType = this.programTypes.find(programType => programType.id === id);
-            console.debug(`Tipo de programa ${programType}`);
             if (programType) {
                 this.selectedProgramType = programType;
             } else {
                 this.selectedProgramType = null;
-                console.error(`El tipo de programa con ID ${id} no se ha encontrado`);
             }
         },
         selectProgramType(programType) {
-            console.log('Selected ProgramType:', programType);
             this.selectedProgramType = programType;
             this.$router.push(`/programtypes/${programType.id}`);
         },
@@ -116,7 +111,6 @@ export default {
         },
         cancelEdit() {
             this.fetchProgramTypes();
-            console.log('Cancelando edición');
             this.isEditing = false;
             this.isAdding = false;
         },
@@ -132,7 +126,6 @@ export default {
                 this.selectedProgramType = null;
                 this.showModal = false;
             } catch (error) {
-                console.error('Error al borrar el tipo de programa:', error);
                 toast.error(`Error al borrar el tipo de programa ${this.selectedProgramType.nombre}.`);
             } finally {
                 this.fetchProgramTypes();
@@ -145,10 +138,8 @@ export default {
 
         async saveProgramType(programType) {
             if (this.isEditing) {
-                console.log('Editando un registro existente');
                 await axios.put(`/api/tiposprogramas/${programType.id}`, programType);
             } else if (this.isAdding) {
-                console.log('Creando un registro nuevo');
                 await axios.post('/api/tiposprogramas', programType);
             }
             this.isEditing = false;
@@ -161,29 +152,24 @@ export default {
             const toast = useToast();
             try {
                 if (this.isEditing) {
-                    console.log('Editando un registro existente');
                     await axios.put('/api/tipoprogramas', programType);
                     toast.success(`El tipo de programa ${programType.nombre} se ha actualizado`);
                 } else
                     if (this.isAdding) {
-                        console.log('Creando un registro nuevo');
                         await axios.post('/api/tipoprogramas', programType);
                         toast.success(`El tipo de programa ${programType.nombre} se ha creado`);
                     }
                 this.isEditing = false;
                 this.isAdding = false;
-                console.log('Registro guardado con éxito');
                 this.fetchProgramTypes();
             } catch (error) {
                 toast.error(`Error al guardar el tipo de programa ${programType.nombre}`);
-                console.error('Error al guardar el tipo de programa:', error)
             }
         },
 
         async handleProgramTypeSaved(updatedProgramType) {
             const toast = useToast();
             try {
-                console.log('Tipo de programa a actualizar:', updatedProgramType);
                 const response = await axios.put(`/api/tipoprogramas`, updatedProgramType);
                 const updatedProgramTypeData = response.data;
                 const index = this.programTypes.findIndex(programType => programType.id === updatedProgramTypeData.id);
@@ -197,7 +183,6 @@ export default {
                 }
                 toast.success(`ProgramType with id ${updatedProgramTypeData.id} updated successfully.`);
             } catch (error) {
-                console.error('Error updating program type:', error);
                 toast.error(`Error updating program type with id ${updatedProgramType.id}.`);
             } finally {
                 window.location.reload();

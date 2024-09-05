@@ -1,36 +1,38 @@
 <template>
   <div class="program-list">
-    <h1>Lista de Programas</h1>
+    <h1>Programas</h1>
     <div class="actions">
       <button class="create-button" @click="createNewPrograma">Crear Nuevo Programa</button>
       <button class="edit-button" @click="editPrograma" :disabled="!selectedPrograma">Editar</button>
       <button class="delete-button" @click="showDeleteModal" :disabled="!selectedPrograma">Eliminar</button>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Clasificación</th>
-          <th>Canal</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Tipo de Programa</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)"
-          :class="{ selected: programa.id === selectedPrograma?.id }">
-          <td>{{ programa.nombre }}</td>
-          <td>{{ programa.descripcion }}</td>
-          <td>{{ programa.clasificacion }}</td>
-          <td>{{ programa.canal }}</td>
-          <td>{{ formatDate(programa.fechaIni) }}</td>
-          <td>{{ formatDate(programa.fechaFin) }}</td>
-          <td>{{ programa.tipoPrograma?.nombre }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Clasificación</th>
+            <th>Canal</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Tipo de Programa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)"
+            :class="{ selected: programa.id === selectedPrograma?.id }">
+            <td>{{ programa.nombre }}</td>
+            <td>{{ programa.descripcion }}</td>
+            <td>{{ programa.clasificacion }}</td>
+            <td>{{ programa.canal }}</td>
+            <td>{{ formatDate(programa.fechaIni) }}</td>
+            <td>{{ formatDate(programa.fechaFin) }}</td>
+            <td>{{ programa.tipoPrograma?.nombre }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <ProgramDetails v-if="showNewForm || showDetails" :programa="editablePrograma" :isEditMode="showDetails"
       @save="handleSave" @cancel="handleCancel" />
@@ -175,6 +177,21 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.table-container {
+  max-height: 400px; /* Altura máxima ajustable */
+  overflow-y: auto;
+  position: relative; /* Necesario para hacer que el sticky funcione correctamente */
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Aumenta el z-index del encabezado */
+  background-color: #f2f2f2; /* Asegúrate de que tenga un fondo sólido */
+  color: #333; /* Color del texto */
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Añade un ligero sombreado para mayor visibilidad */
 }
 
 th,

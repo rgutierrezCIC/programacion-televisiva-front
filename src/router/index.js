@@ -5,7 +5,7 @@ import HomeView from '../views/HomeView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
- 
+
     {
       path: '/about',
       name: 'about',
@@ -25,6 +25,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/programtypes/:id?',
+      name: 'ProgramTypeView',
+      component: ProgramTypeView
     }
   ]
 })

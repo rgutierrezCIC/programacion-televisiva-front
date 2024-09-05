@@ -1,14 +1,12 @@
 <template>
     <div class="program-list">
         <h1>Tipos de Programas</h1>
-        <div class="actions">
-            <button class="create-button" @click="addProgramType">Crear nuevo Tipo Programa</button>
-            <button class="edit-button" @click="editProgramType" :disabled="!selectedProgramType">Editar</button>
-            <button class="delete-button" @click.stop="showDeleteModal"
-                :disabled="!selectedProgramType">Eliminar</button>
-        </div>
+
         <div class="left-panel">
-            <ProgramTypeTable :programTypes="programTypes" @programType-selected="handleProgramTypeSelected" />
+            <ProgramTypeTable ref="programTypeTable" :programTypes="programTypes"
+                :selectedProgramType="selectedProgramType" @selectProgramType="selectProgramType"
+                @addProgramType="addProgramType" @editProgramType="editProgramType"
+                @showDeleteModal="showDeleteModal" />
         </div>
 
         <div class="right-panel" v-if="isEditing || isAdding">
@@ -52,13 +50,24 @@ export default {
         await this.fetchProgramTypes();
         const programTypeId = this.$route.params.id;
         if (programTypeId) {
+            console.log('Selected ProgramType:', programTypeId);
             this.selectProgramTypeById(programTypeId);
         }
     },
+    // mounted() {
+    //     document.addEventListener('click', this.handleClickOutside);
+    // },
+    // beforeUnmount() {
+    //     document.removeEventListener('click', this.handleClickOutside);
+    // },
     watch: {
         '$route.params.id': function (newId) {
             if (newId) {
+                this.fetchProgramTypes();
                 this.selectProgramTypeById(newId);
+            } else {
+                this.fetchProgramTypes();
+                this.selectedProgramType = null;
             }
         }
     },
@@ -73,22 +82,25 @@ export default {
                     this.selectProgramTypeById(programTypeId);
                 }
             } catch (error) {
+                const toast = useToast();
                 toast.error(`Error cargando tipos de programa.`);
                 console.error('Error cargando tipos de programa:', error);
             }
         },
         selectProgramTypeById(id) {
-            const programType = this.programTypes.find(programType => programType.id === parseInt(id));
+            const programType = this.programTypes.find(programType => programType.id === id);
+            console.debug(`Tipo de programa ${programType}`);
             if (programType) {
                 this.selectedProgramType = programType;
             } else {
-                console.error(`El tipo de programa ${programType.nombre} no se ha encontrado`);
+                this.selectedProgramType = null;
+                console.error(`El tipo de programa con ID ${id} no se ha encontrado`);
             }
         },
-        handleProgramTypeSelected(programType) {
+        selectProgramType(programType) {
             console.log('Selected ProgramType:', programType);
             this.selectedProgramType = programType;
-            // this.$router.push(`/programtypes/${programType.id}`);
+            this.$router.push(`/programtypes/${programType.id}`);
         },
         addProgramType() {
             this.selectedProgramType = {};
@@ -190,7 +202,18 @@ export default {
             } finally {
                 window.location.reload();
             }
-        }
+        },
+
+        // handleClickOutside(event) {
+        //     const table = this.$refs.programTypeTable.$el;
+        //     if (!table.contains(event.target)) {
+        //         console.log('Evento Click fuera de la tabla');
+        //         this.selectedProgramType = null;
+        //         //this.$router.push('/programtypes');
+        //     } else {
+        //         console.log('Evento Click en la tabla');
+        //     }
+        // }
     }
 };
 </script>
@@ -218,56 +241,6 @@ th {
 
 tr.selected {
     background-color: #d3d3d3;
-}
-
-.actions {
-    margin-bottom: 1rem;
-}
-
-button {
-    margin-right: 0.5rem;
-    padding: 0.5rem 1rem;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button.create-button {
-    background-color: #28a745;
-    /* Verde */
-}
-
-button.edit-button {
-    background-color: #007bff;
-    /* Azul */
-}
-
-button.delete-button {
-    background-color: #dc3545;
-    /* Rojo */
-}
-
-.details-buttons .save-button {
-    padding: 0.5rem 1rem;
-    background-color: #28a745;
-    /* Verde */
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.details-buttons .cancel-button {
-    padding: 0.5rem 1rem;
-    background-color: #dc3545;
-    /* Rojo */
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
 }
 
 .modal {

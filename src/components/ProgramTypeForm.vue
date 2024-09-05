@@ -1,14 +1,16 @@
 <template>
-    <div>
+    <div class="details-form">
         <h2>{{ title }}</h2>
         <form @submit.prevent="submitForm">
             <div>
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" v-model="programType.nombre" />
+                <label for="nombre">Nombre:
+                    <input type="text" id="nombre" v-model="programType.nombre" />
+                </label>
             </div>
             <div>
-                <label for="descripcion">Descripción:</label>
-                <input type="text" id="descripcion" v-model="programType.descripcion" />
+                <label for="descripcion">Descripción:
+                    <input type="text" id="descripcion" v-model="programType.descripcion" />
+                </label>
             </div>
             <div class="details-buttons">
                 <button class="save-button" type="submit">Guardar</button>

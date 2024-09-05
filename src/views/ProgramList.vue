@@ -2,9 +2,10 @@
   <div class="program-list">
     <h1>Programas</h1>
     <div class="actions">
-      <button class="create-button" @click="createNewPrograma">Crear Nuevo Programa</button>
-      <button class="edit-button" @click="editPrograma" :disabled="!selectedPrograma">Editar</button>
-      <button class="delete-button" @click="showDeleteModal" :disabled="!selectedPrograma">Eliminar</button>
+      <!-- Botones deshabilitados cuando está activo el formulario de edición o creación -->
+      <button class="create-button" @click="createNewPrograma" :disabled="showNewForm || showDetails">Crear Nuevo Programa</button>
+      <button class="edit-button" @click="editPrograma" :disabled="!selectedPrograma || showNewForm || showDetails">Editar</button>
+      <button class="delete-button" @click="showDeleteModal" :disabled="!selectedPrograma || showNewForm || showDetails">Eliminar</button>
     </div>
     <div class="table-container">
       <table>
@@ -20,12 +21,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="programa in programas" :key="programa.id" @click="selectPrograma(programa)"
+          <tr v-for="programa in programas" :key="programa.id"
+            @click="!showNewForm && !showDetails && selectPrograma(programa)"
             :class="{ selected: programa.id === selectedPrograma?.id }">
-            <td>{{ programa.nombre }}</td>
-            <td>{{ programa.descripcion }}</td>
+            <td>{{ truncateText(programa.nombre, 100) }}</td>
+            <td>{{ truncateText(programa.descripcion, 100) }}</td>
             <td>{{ programa.clasificacion }}</td>
-            <td>{{ programa.canal }}</td>
+            <td>{{ truncateText(programa.canal, 100) }}</td>
             <td>{{ formatDate(programa.fechaIni) }}</td>
             <td>{{ formatDate(programa.fechaFin) }}</td>
             <td>{{ programa.tipoPrograma?.nombre }}</td>
@@ -34,9 +36,11 @@
       </table>
     </div>
 
-    <ProgramDetails v-if="showNewForm || showDetails" :programa="editablePrograma" :isEditMode="showDetails"
-      @save="handleSave" @cancel="handleCancel" />
+    <!-- Formulario de edición o creación de programas -->
+    <ProgramDetails v-if="showNewForm || showDetails" ref="editForm" :programa="editablePrograma"
+      :isEditMode="showDetails" @save="handleSave" @cancel="handleCancel" />
 
+    <!-- Modal de confirmación para eliminar -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <p>¿Estás seguro de que deseas eliminar este programa?</p>
@@ -82,7 +86,22 @@ export default {
     formatDate(timestamp) {
       if (!timestamp) return ''
       const date = new Date(timestamp)
-      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
+      const formattedDate = date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })
+      const formattedTime = date.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+      return `${formattedDate} ${formattedTime}`
+    },
+    truncateText(text, maxLength) {
+      if (!text) return ''
+      return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
     },
     selectPrograma(programa) {
       this.selectedPrograma = programa
@@ -111,6 +130,14 @@ export default {
         this.showDetails = true
         this.showNewForm = false
         this.editablePrograma = { ...this.selectedPrograma }
+
+        // Hacer scroll suave hasta el componente de edición
+        this.$nextTick(() => {
+          const editForm = this.$refs.editForm
+          if (editForm) {
+            editForm.$el.scrollIntoView({ behavior: 'smooth' })
+          }
+        })
       }
     },
     showDeleteModal() {
@@ -167,6 +194,7 @@ export default {
       this.editablePrograma = null
     }
   },
+
   mounted() {
     this.fetchProgramas()
   }
@@ -184,18 +212,24 @@ table {
 }
 
 .table-container {
-  max-height: 400px; /* Altura máxima ajustable */
+  max-height: 400px;
+  /* Altura máxima ajustable */
   overflow-y: auto;
-  position: relative; /* Necesario para hacer que el sticky funcione correctamente */
+  position: relative;
+  /* Necesario para hacer que el sticky funcione correctamente */
 }
 
 th {
   position: sticky;
   top: 0;
-  z-index: 2; /* Aumenta el z-index del encabezado */
-  background-color: #f2f2f2; /* Asegúrate de que tenga un fondo sólido */
-  color: #333; /* Color del texto */
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Añade un ligero sombreado para mayor visibilidad */
+  z-index: 2;
+  /* Aumenta el z-index del encabezado */
+  background-color: #f2f2f2;
+  /* Asegúrate de que tenga un fondo sólido */
+  color: #333;
+  /* Color del texto */
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  /* Añade un ligero sombreado para mayor visibilidad */
 }
 
 th,

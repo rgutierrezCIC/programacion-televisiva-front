@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -65,5 +65,20 @@ td {
 th {
   background-color: #f2f2f2;
   text-align: left;
+}
+
+.table-container {
+  max-height: 400px; /* Altura máxima ajustable */
+  overflow-y: auto;
+  position: relative; /* Necesario para hacer que el sticky funcione correctamente */
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Aumenta el z-index del encabezado */
+  background-color: #f2f2f2; /* Asegúrate de que tenga un fondo sólido */
+  color: #333; /* Color del texto */
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Añade un ligero sombreado para mayor visibilidad */
 }
 </style>

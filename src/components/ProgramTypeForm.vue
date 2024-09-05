@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h2>{{ title }}</h2>
         <form>
             <div>
                 <label for="nombre">Nombre:</label>
@@ -20,6 +21,12 @@ export default {
         programType: {
             type: Object,
             required: true
+        },
+        mode: String
+    },
+    computed: {
+        title() {
+            return this.mode === 'edit' ? 'Editando' : 'Nuevo';
         }
     }
 }

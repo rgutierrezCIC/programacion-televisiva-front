@@ -4,12 +4,13 @@
             <ProgramTypeTable :programTypes="programTypes" @programType-selected="handleProgramTypeSelected"
                 @programType-deleted="handleProgramTypeDeleted" />
             <div class="buttons">
+                <button class="addbutton" @click="addProgramType">Añadir</button>
                 <button class="editbutton" @click="editProgramType">Editar</button>
                 <button @click.stop="handleProgramTypeDeleted(selectedProgramType)">Borrar</button>
             </div>
         </div>
-        <div class="right-panel" v-if="isEditing">
-            <ProgramTypeForm :programType="selectedProgramType" />
+        <div class="right-panel" v-if="isEditing || isAdding">
+            <ProgramTypeForm :programType="selectedProgramType" :mode="isEditing ? 'edit' : 'add'" />
             <div class="buttons">
                 <button class="savebutton" @click="handleProgramTypeSaved">Guardar</button>
                 <button @click.stop="cancelEdit">Cancelar</button>
@@ -33,7 +34,8 @@ export default {
         return {
             programTypes: [],
             selectedProgramType: null,
-            isEditing: false
+            isEditing: false,
+            isAdding: false
         };
     },
     async created() {
@@ -78,15 +80,23 @@ export default {
             this.selectedProgramType = programType;
             // this.$router.push(`/programtypes/${programType.id}`);
         },
+        addProgramType() {
+            this.selectedProgramType = {};
+            this.isAdding = true;
+            this.isEditing = false;
+        },
         editProgramType() {
             if (this.selectedProgramType) {
+                this.isAdding = false;
                 this.isEditing = true;
             }
         },
         cancelEdit() {
             this.isEditing = false;
+            this.isAdding = false;
         },
         async handleProgramTypeDeleted(programType) {
+            this.isEditing = false;
             const toast = useToast();
             try {
                 await axios.delete(`/api/tipoprogramas/${programType.id}`);

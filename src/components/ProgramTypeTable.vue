@@ -9,7 +9,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="programType in programTypes" :key="programType.id" @click="selectProgramType(programType)">
+        <tr v-for="programType in programTypes" :key="programType.id"
+          :class="{ 'selected-row': programType === selectedProgramType }" @click="selectProgramType(programType)">
           <td>{{ programType.nombre }}</td>
           <td>{{ programType.descripcion }}</td>
         </tr>
@@ -21,9 +22,15 @@
 
 <script>
 export default {
+  data() {
+    return {
+      selectedProgramType: null
+    };
+  },
   props: ['programTypes'],
   methods: {
     selectProgramType(programType) {
+      this.selectedProgramType = programType;
       this.$emit('programType-selected', programType);
     },
     deleteProgramType(programType) {
@@ -40,6 +47,10 @@ export default {
 
 
 <style scoped>
+.selected-row {
+  background-color: #d3d3d3;
+}
+
 /* Estilos específicos para el componente ProgramTypeList */
 table {
   width: 100%;

@@ -14,7 +14,7 @@ describe('Program List', () => {
  // Prueba para crear un nuevo programa
  describe('ProgramDetails Component', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:5173') // Asegúrate de que esta URL sea la correcta para tu aplicación
+    cy.visit('http://localhost:5173/Programs') 
   })
 
   it('Debería poder crear un nuevo programa', () => {

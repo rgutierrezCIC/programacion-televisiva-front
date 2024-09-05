@@ -10,12 +10,10 @@
         <div class="left-panel">
             <ProgramTypeTable :programTypes="programTypes" @programType-selected="handleProgramTypeSelected" />
         </div>
+
         <div class="right-panel" v-if="isEditing || isAdding">
-            <ProgramTypeForm :programType="selectedProgramType" :mode="isEditing ? 'edit' : 'add'" />
-            <div class="details-buttons">
-                <button class="save-button" @click="handleProgramTypeSaved">Guardar</button>
-                <button class="cancel-button" @click.stop="cancelEdit">Cancelar</button>
-            </div>
+            <ProgramTypeForm :programType="selectedProgramType" :mode="isEditing ? 'edit' : 'add'" @save="handleSave"
+                @cancel="cancelEdit" />
         </div>
 
         <div v-if="showModal" class="modal">
@@ -96,14 +94,17 @@ export default {
             this.selectedProgramType = {};
             this.isAdding = true;
             this.isEditing = false;
+            this.showModal = false;
         },
         editProgramType() {
             if (this.selectedProgramType) {
-                this.isAdding = false;
                 this.isEditing = true;
+                this.isAdding = false;
             }
         },
         cancelEdit() {
+            this.fetchProgramTypes();
+            console.log('Cancelando edición');
             this.isEditing = false;
             this.isAdding = false;
         },
@@ -121,38 +122,56 @@ export default {
             } catch (error) {
                 console.error('Error al borrar el tipo de programa:', error);
                 toast.error(`Error al borrar el tipo de programa ${this.selectedProgramType.nombre}.`);
+            } finally {
+                this.fetchProgramTypes();
             }
         },
+
         showDeleteModal() {
             this.showModal = true
         },
-        async confirmDelete2() {
-            if (!this.selectedPrograma) return
 
+        async saveProgramType(programType) {
+            if (this.isEditing) {
+                console.log('Editando un registro existente');
+                await axios.put(`/api/tiposprogramas/${programType.id}`, programType);
+            } else if (this.isAdding) {
+                console.log('Creando un registro nuevo');
+                await axios.post('/api/tiposprogramas', programType);
+            }
+            this.isEditing = false;
+            this.isAdding = false;
+            this.fetchProgramTypes();
+        },
+
+
+        async handleSave(programType) {
+            const toast = useToast();
             try {
-                await axios.delete(`/api/programas/${this.selectedPrograma.id}`)
-                this.programas = this.programas.filter(p => p.id !== this.selectedPrograma.id)
-                this.selectedPrograma = null
-                this.showModal = false
-                this.showDetails = false
-                this.showNewForm = false
+                if (this.isEditing) {
+                    console.log('Editando un registro existente');
+                    await axios.put('/api/tipoprogramas', programType);
+                    toast.success(`El tipo de programa ${programType.nombre} se ha actualizado`);
+                } else
+                    if (this.isAdding) {
+                        console.log('Creando un registro nuevo');
+                        await axios.post('/api/tipoprogramas', programType);
+                        toast.success(`El tipo de programa ${programType.nombre} se ha creado`);
+                    }
+                this.isEditing = false;
+                this.isAdding = false;
+                console.log('Registro guardado con éxito');
+                this.fetchProgramTypes();
             } catch (error) {
-                console.error('Error al eliminar el programa:', error)
+                toast.error(`Error al guardar el tipo de programa ${programType.nombre}`);
+                console.error('Error al guardar el tipo de programa:', error)
             }
         },
+
         async handleProgramTypeSaved(updatedProgramType) {
             const toast = useToast();
             try {
                 console.log('Tipo de programa a actualizar:', updatedProgramType);
-
-                // Transformar los nombres de los parámetros
-                // const transformedAuthor = {
-                //     id: updatedProgramType.id,
-                //     nombre: updatedProgramType.firstName,
-                //     apellidos: updatedProgramType.lastName,
-                //     annoNacimiento: updatedProgramType.anno
-                // };
-
                 const response = await axios.put(`/api/tipoprogramas`, updatedProgramType);
                 const updatedProgramTypeData = response.data;
                 const index = this.programTypes.findIndex(programType => programType.id === updatedProgramTypeData.id);
@@ -168,6 +187,8 @@ export default {
             } catch (error) {
                 console.error('Error updating program type:', error);
                 toast.error(`Error updating program type with id ${updatedProgramType.id}.`);
+            } finally {
+                window.location.reload();
             }
         }
     }
